@@ -1,16 +1,20 @@
-﻿using System.Security.Cryptography;
-
-namespace SimpleFreeTypeSharp
+﻿namespace SimpleFreeTypeSharp
 {
     public class StringImageData
     {
+        public static readonly StringImageData Empty = new StringImageData(string.Empty);
+
         public StringImageData(string value) 
         {
             Value = value;
             Datas = new CharImageData[Value.Length];
         }
 
-        public string Value { get; set; } 
+        public string Value { get; private set; } 
+        public bool IsEmpty
+        {
+            get { return string.IsNullOrEmpty(Value); }
+        }
 
         public int FontHeight { get; set; }
         public int FontWidth { get; set; }

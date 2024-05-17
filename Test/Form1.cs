@@ -1,6 +1,4 @@
 using SimpleFreeTypeSharp;
-using System;
-using System.Security.Cryptography;
 
 namespace Test
 {
@@ -9,14 +7,6 @@ namespace Test
         public Form1()
         {
             InitializeComponent();
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var data = SimpleFreeTypeSharp.Test.TestString(Path.GetFullPath(@"JF-Dot-MPlusH12.ttf"), textBox1.Text);
-
-            SetCharImageData(CharImageData.Merge(data));
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -26,12 +16,19 @@ namespace Test
 
             var data = ImageFont.Render(textBox1.Text);
 
-            SetCharImageData(data.ToImageData());
+            if (data.IsEmpty == false)
+            {
+                SetCharImageData(data.ToImageData());
+            }
+            else
+            {
+                pictureBox1.Image = null;
+            }
         }
 
         private void SetCharImageData(ImageData data)
         {
-            var baseColor = Color.LimeGreen;
+            var baseColor = Color.DarkGreen;
             var image = new Bitmap(data.Width, data.Height);
 
             for (int i = 0; i < data.Width; i++)

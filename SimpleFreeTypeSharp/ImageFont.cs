@@ -48,6 +48,8 @@ namespace SimpleFreeTypeSharp
 
         public static StringImageData Render(string text)
         {
+            if (string.IsNullOrEmpty(text)) return StringImageData.Empty;
+
             var charList = text.ToCharArray();
             var resList = new StringImageData(text)
             {

@@ -28,22 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
             pictureBox1 = new PictureBox();
             textBox1 = new TextBox();
             button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
-            // 
-            // button1
-            // 
-            button1.Location = new Point(12, 12);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 0;
-            button1.Text = "Test";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
             // 
             // pictureBox1
             // 
@@ -56,14 +45,14 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(174, 11);
+            textBox1.Location = new Point(93, 11);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(208, 23);
+            textBox1.Size = new Size(289, 23);
             textBox1.TabIndex = 2;
             // 
             // button2
             // 
-            button2.Location = new Point(93, 11);
+            button2.Location = new Point(12, 10);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 3;
@@ -79,7 +68,6 @@
             Controls.Add(button2);
             Controls.Add(textBox1);
             Controls.Add(pictureBox1);
-            Controls.Add(button1);
             Name = "Form1";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -88,8 +76,6 @@
         }
 
         #endregion
-
-        private Button button1;
         private PictureBox pictureBox1;
         private TextBox textBox1;
         private Button button2;
