@@ -11,10 +11,12 @@ namespace Test
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ImageFont.SetFont(Path.GetFullPath(@"JF-Dot-MPlusH12.ttf"));
-            ImageFont.SetSize(24f);
+            using var fnt = new ImageFont();
 
-            var data = ImageFont.Render(textBox1.Text);
+            fnt.SetFont(Path.GetFullPath(@"JF-Dot-MPlusH12.ttf"));
+            fnt.SetSize(24f);
+
+            var data = fnt.Render(textBox1.Text);
 
             if (data.IsEmpty == false)
             {

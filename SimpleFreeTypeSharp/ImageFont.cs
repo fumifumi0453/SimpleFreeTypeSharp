@@ -3,23 +3,24 @@ using System.Runtime.InteropServices;
 
 namespace SimpleFreeTypeSharp
 {
-    public static unsafe class ImageFont
+    public unsafe class ImageFont : IDisposable
     {
-        private static FreeTypeLibrary _Library;
-        private static FreeTypeFaceFacade _FaceFacade;
-        private static float _Size;
+        private FreeTypeLibrary _Library;
+        private FreeTypeFaceFacade _FaceFacade;
+        private float _Size;
+        private bool disposedValue;
 
-        static ImageFont()
+        public ImageFont()
         {
             _Library = new FreeTypeLibrary();
             _Size = 12;
         }
 
-        public static FreeTypeFaceFacade FaceFacade { get { return _FaceFacade; } }
+        public FreeTypeFaceFacade FaceFacade { get { return _FaceFacade; } }
 
-        public static float Size { get { return _Size; } }
+        public float Size { get { return _Size; } }
 
-        public static void SetFont(string fontpath)
+        public void SetFont(string fontpath)
         {
             FT_FaceRec_* face;
 
@@ -29,13 +30,13 @@ namespace SimpleFreeTypeSharp
 
             SetFont(face);
         }
-        public static void SetFont(FT_FaceRec_* face)
+        public void SetFont(FT_FaceRec_* face)
         {
             _FaceFacade = new FreeTypeFaceFacade(_Library, face);
             SetSize(_Size);
         }
 
-        public static void SetSize(float size)
+        public void SetSize(float size)
         {
             _Size = size;
             if (_FaceFacade != null)
@@ -46,7 +47,7 @@ namespace SimpleFreeTypeSharp
             }
         }
 
-        public static StringImageData Render(string text)
+        public StringImageData Render(string text)
         {
             if (string.IsNullOrEmpty(text)) return StringImageData.Empty;
 
@@ -107,5 +108,39 @@ namespace SimpleFreeTypeSharp
             resList.BaseLine = baseHeight;
             return resList;
         }
+
+        #region IDisposable
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    _Library.Dispose();
+                }
+
+                // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                // TODO: 大きなフィールドを null に設定します
+                _FaceFacade = null;
+
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+        // ~ImageFont()
+        // {
+        //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
