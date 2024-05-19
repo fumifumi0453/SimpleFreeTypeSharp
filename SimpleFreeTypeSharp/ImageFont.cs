@@ -3,17 +3,23 @@ using System.Runtime.InteropServices;
 
 namespace SimpleFreeTypeSharp
 {
-    public unsafe class ImageFont : IDisposable
+    public unsafe class ImageFont 
     {
-        private FreeTypeLibrary _Library;
+        private static FreeTypeLibrary FTL_Library;
+        private const int INT_FontSize = 12;
+
         private FreeTypeFaceFacade _FaceFacade;
         private float _Size;
         private bool disposedValue;
 
+        static ImageFont()
+        {
+            FTL_Library = new FreeTypeLibrary();
+        }
+
         public ImageFont()
         {
-            _Library = new FreeTypeLibrary();
-            _Size = 12;
+            _Size = INT_FontSize;
         }
 
         public FreeTypeFaceFacade FaceFacade { get { return _FaceFacade; } }
@@ -24,7 +30,7 @@ namespace SimpleFreeTypeSharp
         {
             FT_FaceRec_* face;
 
-            var error = FT.FT_New_Face(_Library.Native, (byte*)Marshal.StringToHGlobalAnsi(fontpath), IntPtr.Zero, &face);
+            var error = FT.FT_New_Face(FTL_Library.Native, (byte*)Marshal.StringToHGlobalAnsi(fontpath), IntPtr.Zero, &face);
 
             if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
 
@@ -32,16 +38,18 @@ namespace SimpleFreeTypeSharp
         }
         public void SetFont(FT_FaceRec_* face)
         {
-            _FaceFacade = new FreeTypeFaceFacade(_Library, face);
+            _FaceFacade = new FreeTypeFaceFacade(FTL_Library, face);
             SetSize(_Size);
         }
 
         public void SetSize(float size)
         {
+            if (size <= 0) throw new ArgumentOutOfRangeException("size");
+
             _Size = size;
             if (_FaceFacade != null)
             {
-                var error = FT.FT_Set_Char_Size(_FaceFacade.FaceRec, IntPtr.Zero, new IntPtr((int)(_Size * 64)), 96, 96);
+                var error = FT.FT_Set_Char_Size(_FaceFacade.FaceRec, IntPtr.Zero, new IntPtr((int)(_Size * 64)), 0, 96);
                 
                 if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
             }
@@ -54,8 +62,8 @@ namespace SimpleFreeTypeSharp
             var charList = text.ToCharArray();
             var resList = new StringImageData(text)
             {
-                FontWidth = (int)_FaceFacade.FaceRec->size->metrics.max_advance / 64,
-                FontHeight = (int)_FaceFacade.FaceRec->size->metrics.height / 64,
+                FontWidth = (int)_FaceFacade.FaceRec->size->metrics.max_advance >> 6,
+                FontHeight = (int)_FaceFacade.FaceRec->size->metrics.height >> 6,
             };
 
             int index = 0;
@@ -79,21 +87,22 @@ namespace SimpleFreeTypeSharp
 
                         if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
 
-                        var advanceX = (int)_FaceFacade.GlyphSlot->metrics.horiAdvance / 64;
-                        var bealingX = (int)_FaceFacade.GlyphSlot->metrics.horiBearingX / 64;
-                        var bearingY = (int)_FaceFacade.GlyphSlot->metrics.horiBearingY / 64;
+                        var advanceX = (int)_FaceFacade.GlyphSlot->metrics.horiAdvance >> 6;
+                        var bealingX = (int)_FaceFacade.GlyphSlot->metrics.horiBearingX >> 6;
+                        var bearingY = (int)_FaceFacade.GlyphSlot->metrics.horiBearingY >> 6;
 
                         error = FT.FT_Render_Glyph(_FaceFacade.GlyphSlot, FT_Render_Mode_.FT_RENDER_MODE_NORMAL);
 
                         if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
 
                         var bitmap = _FaceFacade.GlyphSlot->bitmap;
-                        var cid = new CharImageData(advanceX, bealingX, bearingY, (int)bitmap.width, (int)bitmap.rows + 1);
-                        for (int i = 0; i < bitmap.width; i++)
+                        var cid = new CharImageData(advanceX, bealingX, bearingY, (int)bitmap.width, (int)bitmap.rows);
+                        for (int i = 0; i < bitmap.rows; i++)
                         {
-                            for (int j = 0; j < bitmap.rows; j++)
+                            var tmp = i * bitmap.pitch;
+                            for (int j = 0; j < bitmap.width; j++)
                             {
-                                cid.SetData(i, j, bitmap.buffer[i + j * bitmap.pitch]);
+                                cid.SetData(j, i, bitmap.buffer[j + tmp]);
                             }
                         }
 
@@ -108,39 +117,5 @@ namespace SimpleFreeTypeSharp
             resList.BaseLine = baseHeight;
             return resList;
         }
-
-        #region IDisposable
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: マネージド状態を破棄します (マネージド オブジェクト)
-                    _Library.Dispose();
-                }
-
-                // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
-                // TODO: 大きなフィールドを null に設定します
-                _FaceFacade = null;
-
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
-        // ~ImageFont()
-        // {
-        //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }

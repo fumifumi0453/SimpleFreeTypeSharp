@@ -11,7 +11,7 @@ namespace Test
 
         private void button2_Click(object sender, EventArgs e)
         {
-            using var fnt = new ImageFont();
+            var fnt = new ImageFont();
 
             fnt.SetFont(Path.GetFullPath(@"JF-Dot-MPlusH12.ttf"));
             fnt.SetSize(24f);
