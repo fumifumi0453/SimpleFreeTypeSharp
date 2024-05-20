@@ -10,7 +10,6 @@ namespace SimpleFreeTypeSharp
 
         private FreeTypeFaceFacade _FaceFacade;
         private float _Size;
-        private bool disposedValue;
 
         static ImageFont()
         {
@@ -21,6 +20,8 @@ namespace SimpleFreeTypeSharp
         {
             _Size = INT_FontSize;
         }
+
+        public string FontName { get { return _FaceFacade.MarshalFamilyName(); } }
 
         public FreeTypeFaceFacade FaceFacade { get { return _FaceFacade; } }
 

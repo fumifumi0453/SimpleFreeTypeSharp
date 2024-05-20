@@ -38,9 +38,10 @@
                 startY = BaseLine - data.BearingY;
                 for (int i = 0; i < data.Width; i++)
                 {
+                    var tmp = startX + i;
                     for (int j = 0; j < data.Height; j++)
                     {
-                        image.SetData(startX + i, startY + j, data.GetData(i, j));
+                        image.SetData(tmp, startY + j, data.GetData(i, j));
                     }
                 }
                 startX += data.AdvanceX - data.BearingX;
