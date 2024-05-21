@@ -42,17 +42,20 @@ namespace FreeTypeWrapper
         public int ViewLength
         {
             get { return _ViewLength; }
-            set { _ViewLength = MathHelper.Clamp(value, 0, Text.Length); }
+            set { _ViewLength = MathHelper.Clamp(value, 0, _Text.Length); }
         }
 
         public Texture2D GetTexture()
         {
-            if (string.Equals(_ImageData.Value, Text) == false || Color.Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
+            bool tmp;
+
+            if (tmp = string.Equals(_ImageData.Value, _Text) == false)
             {
-                if (string.Equals(_ImageData.Value, Text) == false)
-                {
-                    _ImageData = _Font.Render(Text);
-                }
+                _ImageData = _Font.Render(_Text);
+            }
+
+            if (tmp || Color.Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
+            {
 
                 _Texture?.Dispose();
                 _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(0, _ViewLength), Color);
@@ -73,9 +76,7 @@ namespace FreeTypeWrapper
                 var alpha = image.Datas[i];
                 if (alpha == 0) continue;
 
-                Color clr;
-
-                if (clrTable.TryGetValue(alpha, out clr) == false)
+                if (clrTable.TryGetValue(alpha, out Color clr) == false)
                 {
                     //clr = new Color(color, color.A * alpha / 255);
                     clr = Color.Multiply(color, alpha / 255f);
