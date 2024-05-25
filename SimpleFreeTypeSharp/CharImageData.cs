@@ -30,6 +30,7 @@
             return res;
         }
 
+        public static readonly CharImageData Empty = new(0, 0, 0, 0, 0);
 
         public CharImageData(int width, int height)
         {

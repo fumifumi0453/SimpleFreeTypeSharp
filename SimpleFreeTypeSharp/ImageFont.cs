@@ -89,6 +89,7 @@ namespace SimpleFreeTypeSharp
                 {
                     case '\r':
                     case '\n':
+                        resList.Datas[index] = CharImageData.Empty;
                         break;
 
                     case '\t':
