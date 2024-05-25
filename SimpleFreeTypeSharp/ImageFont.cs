@@ -3,13 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace SimpleFreeTypeSharp
 {
-    public unsafe class ImageFont 
+    public unsafe class ImageFont : IDisposable
     {
-        private static FreeTypeLibrary FTL_Library;
+        private static readonly FreeTypeLibrary FTL_Library;
         private const int INT_FontSize = 12;
 
         private FreeTypeFaceFacade _FaceFacade;
-        private float _Size;
+        private IntPtr _FontMemory = IntPtr.Zero;
+        private float _FontSize;
 
         static ImageFont()
         {
@@ -18,14 +19,14 @@ namespace SimpleFreeTypeSharp
 
         public ImageFont()
         {
-            _Size = INT_FontSize;
+            _FontSize = INT_FontSize;
         }
 
         public string FontName { get { return _FaceFacade.MarshalFamilyName(); } }
 
         public FreeTypeFaceFacade FaceFacade { get { return _FaceFacade; } }
 
-        public float Size { get { return _Size; } }
+        public float Size { get { return _FontSize; } }
 
         public void SetFont(string fontpath)
         {
@@ -37,20 +38,33 @@ namespace SimpleFreeTypeSharp
 
             SetFont(face);
         }
+        public void SetFont(byte[] data)
+        {
+            FT_FaceRec_* face;
+
+            _FontMemory = Marshal.AllocHGlobal(data.Length);
+            Marshal.Copy(data, 0, _FontMemory, data.Length);
+
+            var error = FT.FT_New_Memory_Face(FTL_Library.Native, (byte*)_FontMemory, (IntPtr)data.Length, IntPtr.Zero, &face);
+
+            if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
+
+            SetFont(face);
+        }
         public void SetFont(FT_FaceRec_* face)
         {
             _FaceFacade = new FreeTypeFaceFacade(FTL_Library, face);
-            SetSize(_Size);
+            SetSize(_FontSize);
         }
 
         public void SetSize(float size)
         {
             if (size <= 0) throw new ArgumentOutOfRangeException("size");
 
-            _Size = size;
+            _FontSize = size;
             if (_FaceFacade != null)
             {
-                var error = FT.FT_Set_Char_Size(_FaceFacade.FaceRec, IntPtr.Zero, new IntPtr((int)(_Size * 64)), 0, 96);
+                var error = FT.FT_Set_Char_Size(_FaceFacade.FaceRec, IntPtr.Zero, new IntPtr((int)(_FontSize * 64)), 0, 96);
                 
                 if (error != FT_Error.FT_Err_Ok) throw new FreeTypeException(error);
             }
@@ -118,5 +132,19 @@ namespace SimpleFreeTypeSharp
             resList.BaseLine = baseHeight;
             return resList;
         }
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            if (_FontMemory != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(_FontMemory);
+                _FontMemory = IntPtr.Zero;
+            }
+        }
+
+        #endregion
+
     }
 }
