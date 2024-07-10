@@ -37,17 +37,18 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.Location = new Point(12, 41);
+            pictureBox1.Location = new Point(12, 73);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(776, 397);
+            pictureBox1.Size = new Size(776, 365);
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
             // 
             // textBox1
             // 
             textBox1.Location = new Point(93, 11);
+            textBox1.Multiline = true;
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(289, 23);
+            textBox1.Size = new Size(289, 56);
             textBox1.TabIndex = 2;
             // 
             // button2

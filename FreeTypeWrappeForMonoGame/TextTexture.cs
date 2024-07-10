@@ -8,6 +8,9 @@ namespace FreeTypeWrapper
 {
     public class TextTexture : IDisposable
     {
+        private const string STR_SampleText = "abcdefghijklmnopqrstuvwxyz!?";
+        private static Texture2D TT2_Empty;
+
         private GraphicsDevice _Device;
         private ImageFont _Font;
         private Color _PrevColor = Color.Transparent;
@@ -26,6 +29,14 @@ namespace FreeTypeWrapper
             _Font = font;
             Text = text;
             Color = color;
+
+            _ImageData = _Font.Render(STR_SampleText);
+
+            if (TT2_Empty is null)
+            {
+                TT2_Empty = new Texture2D(_Device, 1, 1);
+                TT2_Empty.SetData(new Color[] { Color.Transparent });
+            }
         }
 
         public string FontKey { get; private set; }
@@ -44,9 +55,15 @@ namespace FreeTypeWrapper
             get { return _ViewLength; }
             set { _ViewLength = MathHelper.Clamp(value, 0, _Text.Length); }
         }
+        public int FontHeight
+        {
+            get { return _ImageData.FontHeight; }
+        }
 
         public Texture2D GetTexture()
         {
+            if (_Text is null || _Text.Length == 0) return TT2_Empty;
+
             bool tmp;
 
             if (tmp = string.Equals(_ImageData.Value, _Text) == false)
@@ -56,9 +73,8 @@ namespace FreeTypeWrapper
 
             if (tmp || Color.Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
             {
-
                 _Texture?.Dispose();
-                _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(0, _ViewLength), Color);
+                _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(_ViewLength), Color);
                 _PrevColor = Color;
                 _PrevViewLength = _ViewLength;
             }

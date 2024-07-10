@@ -2,12 +2,37 @@
 {
     public class StringImageData
     {
-        public static readonly StringImageData Empty = new StringImageData(string.Empty);
+        public static readonly StringImageData Empty = new StringImageData(string.Empty, 0, 0, 0, null);
 
-        public StringImageData(string value) 
+        private const int INT_LineDistance = 2;
+
+        private CharImageData[][] _Datas;
+        private int _MaxWidth;
+
+        public StringImageData(string value, int baseLine, int fontHeight, int fontWidth, List<List<CharImageData>> datas) 
         {
             Value = value;
-            Datas = new CharImageData[Value.Length];
+            BaseLine = baseLine;
+            FontHeight = fontHeight;
+            FontWidth = fontWidth;
+
+            _MaxWidth = 0;
+
+            if (datas is not null)
+            {
+                _Datas = new CharImageData[datas.Count][];
+                for (int i = 0; i < datas.Count; i++)
+                {
+                    _Datas[i] = datas[i].ToArray();
+                    var w = 1;
+                    foreach (var cid in datas[i]) w += cid.AdvanceX;
+                    if (_MaxWidth < w) _MaxWidth = w;
+                }
+            }
+            else
+            {
+                _Datas = Array.Empty<CharImageData[]>();
+            }
         }
 
         public string Value { get; private set; } 
@@ -19,54 +44,44 @@
         public int FontHeight { get; set; }
         public int FontWidth { get; set; }
         public int BaseLine { get; set; }
-        public CharImageData[] Datas { get; private set; }
-        
+        public int LineDistance { get; set; } = INT_LineDistance;
+
         public ImageData ToImageData()
         {
-            return ToImageData(0, Value.Length);
+            return ToImageData(Value.Length);
         }
-        public ImageData ToImageData(int start, int length)
+        public ImageData ToImageData(int length)
         {
-            var lst = CatDatas(start, length);
-            var image = new ImageData(GetTotalWidth(lst), FontHeight);
+            var image = new ImageData(_MaxWidth, (FontHeight + LineDistance) * _Datas.Length);
 
             int startX = 0;
-            int startY;
-            foreach (var data in lst)
+            int startY = 0, tempY = 0;
+            int index = 0;
+            foreach (var line in _Datas)
             {
-                if (startX != 0 || data.BearingX > 0) startX += data.BearingX;
-                startY = BaseLine - data.BearingY;
-                for (int i = 0; i < data.Width; i++)
+                foreach (var data in line)
                 {
-                    var tmp = startX + i;
-                    for (int j = 0; j < data.Height; j++)
+                    if (startX != 0 || data.BearingX > 0) startX += data.BearingX;
+                    tempY = startY + BaseLine - data.BearingY;
+                    for (int i = 0; i < data.Width; i++)
                     {
-                        image.SetData(tmp, startY + j, data.GetData(i, j));
+                        var tmp = startX + i;
+                        for (int j = 0; j < data.Height; j++)
+                        {
+                            image.SetData(tmp, tempY + j, data.GetData(i, j));
+                        }
                     }
+                    startX += data.AdvanceX - data.BearingX;
+
+                    index++;
+                    if (index == length) return image;
                 }
-                startX += data.AdvanceX - data.BearingX;
+                startY += FontHeight + LineDistance;
+                startX = 0;
             }
 
             return image;
         }
 
-        private CharImageData[] CatDatas(int start, int length)
-        {
-            if (start == 0 && length == Value.Length) return Datas;
-
-            var res = new CharImageData[length];
-            Array.Copy(Datas, start, res, 0, length);
-            return res;
-        }
-        private int GetTotalWidth(CharImageData[] datas)
-        {
-            int width = 0;
-            foreach (var data in datas)
-            {
-                width += data.AdvanceX;
-            }
-
-            return width;
-        }
     }
 }
