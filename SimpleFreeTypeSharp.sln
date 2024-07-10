@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeTypeWrapperForMonoGame", "FreeTypeWrappeForMonoGame\FreeTypeWrapperForMonoGame.csproj", "{4503532B-68FA-4210-AFDF-670226DF05DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTest", "MonoTest\MonoTest.csproj", "{0E4C616D-0580-49D6-B808-EF92B6E690B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{4503532B-68FA-4210-AFDF-670226DF05DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4503532B-68FA-4210-AFDF-670226DF05DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4503532B-68FA-4210-AFDF-670226DF05DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E4C616D-0580-49D6-B808-EF92B6E690B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E4C616D-0580-49D6-B808-EF92B6E690B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E4C616D-0580-49D6-B808-EF92B6E690B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E4C616D-0580-49D6-B808-EF92B6E690B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
