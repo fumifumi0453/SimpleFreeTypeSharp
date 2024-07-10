@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SimpleFreeTypeSharp;
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace FreeTypeWrapper
 {
     public static class TextTextureFactory
     {
-        public static Game Parent { get; set; }
+        public static GraphicsDevice GraphicsDevice { get; set; }
         
         private static Dictionary<string, ImageFont> _Service = new();
 
@@ -49,7 +50,7 @@ namespace FreeTypeWrapper
 
         public static TextTexture Create(string fontKey, string text, Color color)
         {
-            return new TextTexture(Parent.GraphicsDevice, fontKey, _Service[fontKey], text, color);
+            return new TextTexture(GraphicsDevice, fontKey, _Service[fontKey], text, color);
         }
     }
 }
