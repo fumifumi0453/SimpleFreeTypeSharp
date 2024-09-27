@@ -2,7 +2,7 @@
 {
     public class StringImageData
     {
-        public static readonly StringImageData Empty = new StringImageData(string.Empty, 0, 0, 0, null);
+        public static readonly StringImageData Empty = new (string.Empty, 0, 0, 0, null);
 
         private const int INT_LineDistance = 2;
 
@@ -55,20 +55,20 @@
             var image = new ImageData(_MaxWidth, (FontHeight + LineDistance) * _Datas.Length);
 
             int startX = 0;
-            int startY = 0, tempY = 0;
+            int startY = 0;
             int index = 0;
             foreach (var line in _Datas)
             {
                 foreach (var data in line)
                 {
                     if (startX != 0 || data.BearingX > 0) startX += data.BearingX;
-                    tempY = startY + BaseLine - data.BearingY;
+                    var tempY = startY + BaseLine - data.BearingY;
                     for (int i = 0; i < data.Width; i++)
                     {
-                        var tmp = startX + i;
+                        var tempX = startX + i;
                         for (int j = 0; j < data.Height; j++)
                         {
-                            image.SetData(tmp, tempY + j, data.GetData(i, j));
+                            image.SetData(tempX, tempY + j, data.GetData(i, j));
                         }
                     }
                     startX += data.AdvanceX - data.BearingX;
