@@ -1,5 +1,8 @@
 ﻿namespace SimpleFreeTypeSharp
 {
+    /// <summary>
+    /// 文字の画像データ
+    /// </summary>
     public class CharImageData
     {
 
@@ -43,19 +46,38 @@
             BearingY = bearingY;
         }
 
+        /// <summary>
+        /// 描画するときの適正幅サイズ
+        /// </summary>
         public int AdvanceX { get; set; }
+        /// <summary>
+        /// 描画開始点から最適なX方向のオフセット値
+        /// </summary>
         public int BearingX { get; set; }
+        /// <summary>
+        /// 描画開始点から最適なY方向のオフセット値
+        /// </summary>
         public int BearingY { get; set; }
+        /// <summary>
+        /// 文字幅
+        /// </summary>
         public int Width
         {
             get { return Data.Width; }
         }
+        /// <summary>
+        /// 文字高さ
+        /// </summary>
         public int Height
         {
             get { return Data.Height; }
         }
 
+        /// <summary>
+        /// 文字データ本体
+        /// </summary>
         public ImageData Data { get; set; }
+
 
         public void SetData(int x, int y, byte data)
         {
