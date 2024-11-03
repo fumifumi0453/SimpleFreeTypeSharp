@@ -50,15 +50,15 @@
         /// <summary>
         /// 標準的な文字の高さ
         /// </summary>
-        public int FontHeight { get; set; }
+        public int FontHeight { get; private set; }
         /// <summary>
         /// 標準的な文字の幅
         /// </summary>
-        public int FontWidth { get; set; }
+        public int FontWidth { get; private set; }
         /// <summary>
         /// 高さ方向の
         /// </summary>
-        public int BaseLine { get; set; }
+        public int BaseLine { get; private set; }
         /// <summary>
         /// 行間のサイズ
         /// </summary>

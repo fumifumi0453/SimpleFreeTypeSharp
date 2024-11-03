@@ -143,6 +143,7 @@ namespace FreeTypeWrapper
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
                     _Texture?.Dispose();
+                    _Texture = null;
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします

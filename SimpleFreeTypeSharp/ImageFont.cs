@@ -41,6 +41,7 @@ namespace SimpleFreeTypeSharp
         /// フォントサイズを返します
         /// </summary>
         public float Size { get { return _FontSize; } }
+
         /// <summary>
         /// フォントを設定します。
         /// </summary>

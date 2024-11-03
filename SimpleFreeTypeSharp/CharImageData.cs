@@ -76,7 +76,7 @@
         /// <summary>
         /// 文字データ本体
         /// </summary>
-        public ImageData Data { get; set; }
+        public ImageData Data { get; private set; }
 
 
         public void SetData(int x, int y, byte data)
