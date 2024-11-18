@@ -4,7 +4,7 @@ using SimpleFreeTypeSharp;
 using System;
 using System.Collections.Generic;
 
-namespace FreeTypeWrapper
+namespace FreeTypeWrapperForMonoGame
 {
     public class TextTexture : IDisposable
     {
@@ -61,6 +61,10 @@ namespace FreeTypeWrapper
             }
         }
         /// <summary>
+        /// 描画する範囲を指定します
+        /// </summary>
+        public Point Size { get; set; } = Point.Zero;
+        /// <summary>
         /// 描画する文字列の範囲を指定します
         /// 文字列を変更すると、自動的に最大範囲になります
         /// </summary>
@@ -92,10 +96,10 @@ namespace FreeTypeWrapper
                 _ImageData = _Font.Render(_Text);
             }
 
-            if (tmp || _Texture is null || Color.Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
+            if (tmp || _Texture is null || Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
             {
                 _Texture?.Dispose();
-                _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(_ViewLength), Color);
+                _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(Size.X, Size.Y, _ViewLength), Color);
                 _PrevColor = Color;
                 _PrevViewLength = _ViewLength;
             }

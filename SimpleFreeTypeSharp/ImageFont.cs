@@ -12,7 +12,7 @@ namespace SimpleFreeTypeSharp
         private static readonly Dictionary<byte[], FontFileContent> SL_FontDatas;
         private const int INT_FontSize = 12;
 
-        private FreeTypeFaceFacade _FaceFacade;
+        private FreeTypeFaceFacade _FaceFacade = null;
         private float _FontSize;
 
         static ImageFont()

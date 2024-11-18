@@ -1,4 +1,4 @@
-﻿using FreeTypeWrapper;
+﻿using FreeTypeWrapperForMonoGame;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -34,7 +34,7 @@ namespace MonoTest
 
             TextTextureFactory.GraphicsDevice = this.GraphicsDevice;
             TextTextureFactory.LoadFont("Default", @"JF-Dot-MPlusH12.ttf", 24);
-            textTexture = TextTextureFactory.Create("Default", "日本語でおｋ\r\nそう日本語でおｋ", Color.Violet);
+            textTexture = TextTextureFactory.Create("Default", "日本語でおｋ\r\nそう日本語ならね", Color.Violet);
         }
 
         protected override void Update(GameTime gameTime)

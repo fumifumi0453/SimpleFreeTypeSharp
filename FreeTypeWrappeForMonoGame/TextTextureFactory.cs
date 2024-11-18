@@ -2,9 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using SimpleFreeTypeSharp;
 using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace FreeTypeWrapper
+namespace FreeTypeWrapperForMonoGame
 {
     /// <summary>
     /// TextTextureを作成するためのFactory
@@ -15,7 +14,7 @@ namespace FreeTypeWrapper
         /// TextTextureの利用先のGraphicsDevice
         /// </summary>
         public static GraphicsDevice GraphicsDevice { get; set; }
-        
+
         private static readonly Dictionary<string, ImageFont> _Service = new();
 
         /// <summary>

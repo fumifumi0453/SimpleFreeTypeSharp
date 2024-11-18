@@ -1,4 +1,5 @@
-﻿namespace SimpleFreeTypeSharp
+﻿
+namespace SimpleFreeTypeSharp
 {
     /// <summary>
     /// 文字列の画像データ
@@ -79,27 +80,42 @@
         /// <returns></returns>
         public ImageData ToImageData(int length)
         {
-            var image = new ImageData(_MaxWidth, (FontHeight + LineDistance) * _Datas.Length);
+            return ToImageData(0, 0, length);
+        }
+        /// <summary>
+        /// 文字ごとの画像データを指定した範囲内に指定した文字数分連結して1つの画像データを返す
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public ImageData ToImageData(int width, int height, int length)
+        {
+            if (width <= 0) width = _MaxWidth;
+            if (height <= 0) height = (FontHeight + LineDistance) * _Datas.Length;
+            var image = new ImageData(width, height);
 
             int startX = 0;
             int startY = 0;
             int index = 0;
             foreach (var line in _Datas)
             {
-                if (line is not null) {
+                if (line is not null)
+                {
                     foreach (var data in line)
                     {
                         // 先頭の文字の描画開始点がマイナス位置の場合、オフセットする
                         if (startX != 0 || data.BearingX > 0) startX += data.BearingX;
 
+                        if (width < startX + data.Width)
+                        {
+                            startY += FontHeight + LineDistance;
+                            startX = 0;
+                        }
+
                         var tempY = startY + BaseLine - data.BearingY;
-                        //for (int i = 0; i < data.Width; i++)
-                        //{
-                        //    var tempX = startX + i;
-                        //    for (int j = 0; j < data.Height; j++)
-                        //        image.SetData(tempX, tempY + j, data.GetData(i, j));
-                        //}
-                        for (int i = 0; i < data.Height; i++) 
+                        if (height < tempY + data.Height) return image;
+
+                        for (int i = 0; i < data.Height; i++)
                             image.SetData(data.Data.Datas, data.Data.GetIndex(0, i), image.GetIndex(startX, tempY + i), data.Width);
 
                         startX += data.AdvanceX - data.BearingX;
@@ -114,6 +130,5 @@
 
             return image;
         }
-
     }
 }
