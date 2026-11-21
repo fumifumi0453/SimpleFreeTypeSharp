@@ -59,6 +59,15 @@ namespace SimpleFreeTypeSharp
         {
             Array.Copy(srcData, srcIndex, Datas, destIndex, length);
         }
+        /// <summary>
+        /// 画像の該当位置からバイナリデータを設定します
+        /// </summary>
+        /// <param name="srcData"></param>
+        /// <param name="destIndex"></param>
+        public void SetData(ReadOnlySpan<byte> srcData, int destIndex)
+        {
+            srcData.CopyTo(Datas.AsSpan(destIndex));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetIndex(int x, int y)
