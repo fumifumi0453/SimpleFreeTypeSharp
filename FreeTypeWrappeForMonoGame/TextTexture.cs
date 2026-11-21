@@ -14,9 +14,11 @@ namespace FreeTypeWrapperForMonoGame
         private GraphicsDevice _Device;
         private ImageFont _Font;
         private Color _PrevColor = Color.Transparent;
-        private string _Text;
+        private string _Text = string.Empty;
+        private int _TextLength;
         private int _ViewLength;
         private int _PrevViewLength;
+        private Point _PrevSize;
 
         private StringImageData _ImageData = StringImageData.Empty;
         private Texture2D _Texture;
@@ -56,8 +58,12 @@ namespace FreeTypeWrapperForMonoGame
             set
             {
                 if (string.IsNullOrEmpty(value)) value = string.Empty;
+                // 同じ文字列が設定された場合は ViewLength を維持する
+                if (string.Equals(_Text, value)) return;
+
                 _Text = value;
-                _ViewLength = _Text.Length;
+                _TextLength = ImageFont.CountChars(_Text);
+                _ViewLength = _TextLength;
             }
         }
         /// <summary>
@@ -66,12 +72,20 @@ namespace FreeTypeWrapperForMonoGame
         public Point Size { get; set; } = Point.Zero;
         /// <summary>
         /// 描画する文字列の範囲を指定します
+        /// 改行は文字数に含まず、サロゲートペアは1文字として数えます
         /// 文字列を変更すると、自動的に最大範囲になります
         /// </summary>
         public int ViewLength
         {
             get { return _ViewLength; }
-            set { _ViewLength = MathHelper.Clamp(value, 0, _Text.Length); }
+            set { _ViewLength = MathHelper.Clamp(value, 0, _TextLength); }
+        }
+        /// <summary>
+        /// ViewLength に指定できる最大値（描画される文字数）を返します
+        /// </summary>
+        public int TextLength
+        {
+            get { return _TextLength; }
         }
         /// <summary>
         /// フォントの通常高さを返します
@@ -89,19 +103,23 @@ namespace FreeTypeWrapperForMonoGame
         {
             if (string.IsNullOrEmpty(_Text)) return TT2_Empty;
 
-            bool tmp;
-
-            if (tmp = string.Equals(_ImageData.Value, _Text) == false)
+            bool textChanged = string.Equals(_ImageData.Value, _Text) == false;
+            if (textChanged)
             {
                 _ImageData = _Font.Render(_Text);
             }
 
-            if (tmp || _Texture is null || Equals(_PrevColor, Color) == false || _PrevViewLength != _ViewLength)
+            if (textChanged
+                || _Texture is null
+                || _PrevColor != Color
+                || _PrevViewLength != _ViewLength
+                || _PrevSize != Size)
             {
                 _Texture?.Dispose();
                 _Texture = CreateTexture2D(_Device, _ImageData.ToImageData(Size.X, Size.Y, _ViewLength), Color);
                 _PrevColor = Color;
                 _PrevViewLength = _ViewLength;
+                _PrevSize = Size;
             }
 
             return _Texture;

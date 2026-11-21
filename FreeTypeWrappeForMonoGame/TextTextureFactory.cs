@@ -37,6 +37,8 @@ namespace FreeTypeWrapperForMonoGame
             }
             catch
             {
+                // 読み込みに失敗した場合もFreeTypeのリソースを解放する
+                font.Dispose();
                 return false;
             }
 
@@ -63,11 +65,35 @@ namespace FreeTypeWrapperForMonoGame
             }
             catch
             {
+                // 読み込みに失敗した場合もFreeTypeのリソースを解放する
+                font.Dispose();
                 return false;
             }
 
             _Service.Add(fontKey, font);
             return true;
+        }
+
+        /// <summary>
+        /// 読み込んだフォントデータを破棄します
+        /// 破棄したフォントを使用している TextTexture は、以降テクスチャを作成できなくなります
+        /// </summary>
+        /// <param name="fontKey"></param>
+        /// <returns>破棄した場合はtrue</returns>
+        public static bool UnloadFont(string fontKey)
+        {
+            if (_Service.Remove(fontKey, out var font) == false) return false;
+
+            font.Dispose();
+            return true;
+        }
+        /// <summary>
+        /// 読み込んだすべてのフォントデータを破棄します
+        /// </summary>
+        public static void UnloadAll()
+        {
+            foreach (var font in _Service.Values) font.Dispose();
+            _Service.Clear();
         }
 
         /// <summary>
